@@ -2248,6 +2248,20 @@
             method: 'POST',
             headers: {}
         },
+        style: `
+            :host {
+                --chat--color-primary: #94030f;
+                --chat--color-primary-shade-50: #690b13;
+                --chat--color-secondary: #eab830;
+            }
+            .chat-header {
+                background-color: #94030f !important;
+            }
+            .chat-message-user .chat-message-content {
+                background-color: #eab830 !important;
+                color: #000 !important;
+            }
+        `,
         target: '#n8n-chat',
         mode: 'window',
         chatInputKey: 'chatInput',
