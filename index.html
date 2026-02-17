@@ -456,96 +456,13 @@
                 flex-grow: 1;
                 /* Allows this container to take available space */
                 display: flex;
+                z-index: 2;
                 flex-direction: column;
                 justify-content: center;
                     align-items: center;
                 text-align: center;
                 padding: 20px;
                 box-sizing: border-box;
-            }
-
-            .company-name {
-                font-size: 4em;
-                font-weight: bold;
-                margin-bottom: 10px;
-                opacity: 0;
-                /* Initial state for animation */
-                transform: translateY(-20px);
-                /* Initial state for animation */
-                animation: fadeInSlideDown 1.5s forwards;
-            }
-
-            .tagline {
-                font-size: 1.5em;
-                opacity: 0;
-                /* Initial state for animation */
-                transform: translateY(20px);
-                /* Initial state for animation */
-                animation: fadeInSlideUp 1.5s forwards 0.5s;
-                /* Delay for tagline animation */
-            }
-
-            @keyframes fadeInSlideDown {
-                from {
-                    opacity: 0;
-                    transform: translateY(-20px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            @keyframes fadeInSlideUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(20px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            @keyframes slideUpAssistant {
-                from {
-                    transform: translateY(100%);
-                }
-
-                to {
-                    transform: translateY(0);
-                }
-            }
-    
-            /* Responsive adjustments */
-            @media (max-width: 768px) {
-                .company-name {
-                    font-size: 3em;
-                }
-
-                .tagline {
-                    font-size: 1.2em;
-                }
-
-                .chat-assistant-container {
-                    padding: 15px;
-                }
-            }
-
-            @media (max-width: 480px) {
-                .company-name {
-                    font-size: 2.5em;
-                }
-
-                .tagline {
-                    font-size: 1em;
-                }
-
-                .chat-assistant-container {
-                    padding: 10px;
-                }
             }
 
 
@@ -652,6 +569,12 @@
                     height: 100% !important;
                     max-height: 100vh !important;
                 }
+            }
+
+            .n8n-chat-widget, 
+            #n8n-chat-widget-container,
+            .chat-toggle {
+                z-index: 9999 !important; 
             }
         </style>
     </head>
