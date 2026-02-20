@@ -2,41 +2,46 @@ import os
 import requests
 from flask import Flask, request, jsonify, render_template
 from dotenv import load_dotenv
-from bs4 import BeautifulSoup  # For cleaning HTML
+from bs4 import BeautifulSoup
 
-# Load environment variables
+# Load environment variables from .env
 load_dotenv()
 
 app = Flask(__name__)
 
-# Ollama Cloud setup
-API_KEY = os.getenv("OLLAMA_API_KEY")  # Make sure this is set in .env
+# Ollama API setup
+API_KEY = os.getenv("OLLAMA_API_KEY")
 OLLAMA_API_URL = "https://ollama.com/v1/chat/completions"
 HEADERS = {
     "Authorization": f"Bearer {API_KEY}",
     "Content-Type": "application/json"
 }
 
-# Function to load HTML content and strip the chat widget div
-def load_html_content():
-    html_path = "index.html"  # Your main website file
+# ------------------------------
+# HTML Loader & Cleaner
+# ------------------------------
+def load_html_content(filename="index.html"):
+    """Load the HTML file and extract readable text."""
     try:
-        with open(html_path, "r", encoding="utf-8") as f:
-            html_content = f.read()
-        # Use BeautifulSoup to remove chat widget code from content
-        soup = BeautifulSoup(html_content, "html.parser")
-        widget = soup.find(id="chat-widget")
-        if widget:
-            widget.decompose()  # remove the widget from content
-        # Return text only, ignore scripts/styles
-        return soup.get_text(separator="\n", strip=True)
+        with open(filename, "r", encoding="utf-8") as f:
+            html_text = f.read()
+        # Remove scripts and styles
+        soup = BeautifulSoup(html_text, "html.parser")
+        for s in soup(["script", "style"]):
+            s.extract()
+        # Extract clean text
+        text = soup.get_text(separator="\n")
+        text = "\n".join(line.strip() for line in text.splitlines() if line.strip())
+        return text
     except Exception as e:
-        return "Dunes International School information: Timings 7:30 AM - 2:50 PM."
+        return "Error loading website content."
 
-# Function to call Ollama Cloud API
-def ai_generate_answer(question, context):
+# ------------------------------
+# AI Answer Generator
+# ------------------------------
+def ai_generate_answer(question, context_text):
     if not API_KEY:
-        return "System Error: Ollama API Key is missing."
+        return "System Error: Ollama API Key missing."
 
     system_instruction = f"""
 You are ChatDIS, the official and friendly AI assistant for Dunes International School (DIS), Abu Dhabi.
@@ -48,8 +53,8 @@ GUIDELINES:
 4. Keep the tone professional, welcoming, and helpful.
 5. Use bullet points for lists and bold text for important details.
 
-SCHOOL CONTEXT:
-{context}
+WEBSITE CONTEXT:
+{context_text}
 """
 
     payload = {
@@ -71,10 +76,13 @@ SCHOOL CONTEXT:
             return result["choices"][0].get("message", {}).get("content", "No content returned")
 
         return f"Unexpected API response: {result}"
+
     except Exception as e:
         return f"Connection Error: {str(e)}"
 
-# Flask routes
+# ------------------------------
+# Flask Routes
+# ------------------------------
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -82,9 +90,13 @@ def home():
 @app.route("/ask", methods=["POST"])
 def ask():
     user_question = request.json.get("question", "").strip()
-    website_content = load_html_content()
-    answer = ai_generate_answer(user_question, website_content)
+    # Load and clean HTML content each time
+    website_text = load_html_content("index.html")
+    answer = ai_generate_answer(user_question, website_text)
     return jsonify({"answer": answer})
 
+# ------------------------------
+# Run Server
+# ------------------------------
 if __name__ == "__main__":
     app.run(debug=True)
