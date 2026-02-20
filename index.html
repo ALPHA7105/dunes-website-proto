@@ -590,166 +590,148 @@
             }
         </style>
         <style>
-/* Chat widget container */
-#chat-widget {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 500px;
-  max-width: 90%;
-  height: 600px;
-  background: #faf4f4;
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.25);
-  display: flex;
-  flex-direction: column;
-  font-family: Arial, sans-serif;
-  overflow: hidden;
-  z-index: 1000;
-}
+            /* Floating chat button */
+            #chat-button {
+              position: fixed;
+              bottom: 20px;
+              right: 20px;
+              width: 60px;
+              height: 60px;
+              background-color: #971721;
+              border-radius: 50%;
+              color: white;
+              font-size: 30px;
+              border: none;
+              cursor: pointer;
+              z-index: 1000;
+            }
 
-/* Header */
-#chat-header {
-  background-color: #003366;
-  color: white;
-  padding: 12px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
-}
+            /* Chat window */
+            #chat-window {
+              position: fixed;
+              bottom: 90px;
+              right: 20px;
+              width: 350px;
+              max-height: 500px;
+              background: #faf4f4;
+              border-radius: 10px;
+              box-shadow: 0 0 10px rgba(0,0,0,0.2);
+              display: none;
+              flex-direction: column;
+              overflow: hidden;
+              z-index: 999;
+              font-family: sans-serif;
+            }
 
-#chat-header span {
-  font-size: 16px;
-}
+            /* Chat header */
+            #chat-header {
+              background: #860404;
+              color: white;
+              padding: 10px;
+              font-weight: bold;
+            }    
 
-/* Message area */
-#chat-messages {
-  flex: 1;
-  padding: 10px;
-  overflow-y: auto;
-  background-color: #faf4f4;
-  font-size: 15px;
-}
+            /* Chat messages */
+            #chat-messages {
+              flex: 1;
+              padding: 10px;
+              overflow-y: auto;
+            }
 
-/* Chat input */
-#chat-input-area {
-  display: flex;
-  border-top: 1px solid #ddd;
-  padding: 10px;
-  background: #fff;
-}
+            /* Individual messages */
+            .message {
+              margin-bottom: 10px;
+              padding: 8px 12px;
+              border-radius: 8px;
+              max-width: 80%;
+              word-wrap: break-word;
+            }
+            .bot-message { background: #860404; color: #fafafa; align-self: flex-start; }
+            .user-message { background: #e0e0e0; color: #050505; align-self: flex-end; }
 
-#chat-input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 15px;
-}
-
-#chat-input:focus {
-  outline: none;
-  border-color: #003366;
-}
-
-#chat-send-btn {
-  background-color: #870d0d;
-  color: #fff;
-  border: none;
-  border-radius: 23px;
-  padding: 0 18px;
-  margin-left: 10px;
-  cursor: pointer;
-}
-
-.bot-message {
-  background-color: #860404;
-  color: #fafafa;
-  padding: 8px 12px;
-  border-radius: 8px;
-  margin: 5px 0;
-  max-width: 80%;
-}
-
-.user-message {
-  background-color: #e0e0e0;
-  color: #050505;
-  padding: 8px 12px;
-  border-radius: 8px;
-  margin: 5px 0;
-  align-self: flex-end;
-  max-width: 80%;
-}
-
-#chat-widget .message-container {
-  display: flex;
-  flex-direction: column;
-}
-</style>
-</head>
-<body>
-
-<!-- Chat widget -->
-<div id="chat-widget">
-  <div id="chat-header"><span>ChatDIS</span></div>
-  <div id="chat-messages"></div>
-  <div id="chat-input-area">
-    <input type="text" id="chat-input" placeholder="Type your question..." maxlength="200">
-    <button id="chat-send-btn">Send</button>
-  </div>
-</div>
-
-<script>
-const messagesContainer = document.getElementById('chat-messages');
-const inputField = document.getElementById('chat-input');
-const sendBtn = document.getElementById('chat-send-btn');
-
-// Add message to chat
-function addMessage(text, sender='bot') {
-  const msgDiv = document.createElement('div');
-  msgDiv.className = sender === 'bot' ? 'bot-message' : 'user-message';
-  msgDiv.textContent = text;
-  const wrapper = document.createElement('div');
-  wrapper.className = 'message-container';
-  wrapper.appendChild(msgDiv);
-  messagesContainer.appendChild(wrapper);
-  messagesContainer.scrollTop = messagesContainer.scrollHeight;
-}
-
-// Send message to Flask backend
-async function sendMessage() {
-  const question = inputField.value.trim();
-  if (!question) return;
-
-  addMessage(question, 'user');
-  inputField.value = '';
-
-  try {
-    const res = await fetch('/ask', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question })
-    });
-
-    const data = await res.json();
-    addMessage(data.answer, 'bot');
-  } catch(err) {
-    addMessage("Sorry, I'm having trouble connecting. Try again later.", 'bot');
-    console.error(err);
-  }
-}
-
-// Send on button click or enter
-sendBtn.addEventListener('click', sendMessage);
-inputField.addEventListener('keypress', (e) => {
-  if(e.key === 'Enter') sendMessage();
-});
-</script>
+            /* Input area */
+            #chat-input {
+              display: flex;
+              border-top: 1px solid #ccc;
+            }
+            #chat-input input {
+              flex: 1;
+              padding: 8px;
+              border: none;
+              outline: none;
+              font-size: 14px;
+            }
+            #chat-input button {
+              padding: 0 15px;
+              background: #870d0d;
+              color: white;
+              border: none;
+              cursor: pointer;
+            }
+        </style>
     </head>
     <body class="home page-template-default page page-id-416 et_pb_button_helper_class et_fullwidth_nav et_fixed_nav et_show_nav et_secondary_nav_enabled et_secondary_nav_only_menu et_primary_nav_dropdown_animation_expand et_secondary_nav_dropdown_animation_fade et_header_style_left et_pb_footer_columns4 et_cover_background et_pb_gutter windows et_pb_gutters3 et_pb_pagebuilder_layout et_no_sidebar et_divi_theme et-db et_minified_js et_minified_css">
+        <!-- Floating button -->
+        <button id="chat-button">💬</button>
+
+        <!-- Chat window -->
+        <div id="chat-window">
+          <div id="chat-header">ChatDIS</div>
+          <div id="chat-messages">
+            <div class="message bot-message">Hello! I am ChatDIS. How can I help you today?</div>
+          </div>
+          <div id="chat-input">
+            <input type="text" placeholder="Type your question..." id="user-input">
+            <button id="send-button">Send</button>
+          </div>
+        </div>
+
+        <script>
+        const chatButton = document.getElementById('chat-button');
+        const chatWindow = document.getElementById('chat-window');
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+
+        chatButton.addEventListener('click', () => {
+          chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
+          chatWindow.style.flexDirection = 'column';
+        });
+
+        // Function to append message
+        function addMessage(text, sender) {
+          const div = document.createElement('div');
+          div.classList.add('message', sender === 'bot' ? 'bot-message' : 'user-message');
+          div.innerText = text;
+          chatMessages.appendChild(div);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Send question to Flask backend
+        async function sendMessage() {
+          const question = userInput.value.trim();
+          if (!question) return;
+          addMessage(question, 'user');
+          userInput.value = '';
+
+          try {
+            const res = await fetch('/ask', {  // make sure Flask is deployed to this domain
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({ question })
+            });
+
+            if (!res.ok) throw new Error('Network error');
+            const data = await res.json();
+            addMessage(data.answer || "Sorry, I couldn't find an answer.", 'bot');
+          } catch (err) {
+            addMessage("Sorry, I'm having trouble connecting. Try again later.", 'bot');
+          }
+        }
+
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+        </script>
         <div id="page-container">
             <div id="top-header">
                 <div class="container clearfix">
